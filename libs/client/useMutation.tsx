@@ -5,7 +5,9 @@ interface UseMutationState<T> {
   data?: T;
   error?: object;
 }
-type UseMutationResult<T> = [(data: any) => void, UseMutationState<T>];
+
+// useMutation의 return [] 타입
+type UseMutationResult<T> = [(data: T) => void, UseMutationState<T>];
 
 export default function useMutation<T = any>(
   url: string
@@ -15,6 +17,8 @@ export default function useMutation<T = any>(
     data: undefined,
     error: undefined,
   });
+
+  // server data를 fetch 하고,  data와 error, isLoading를 정의함
   function mutation(data: any) {
     setSate((prev) => ({ ...prev, loading: true }));
     fetch(url, {
