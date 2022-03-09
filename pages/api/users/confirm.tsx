@@ -41,5 +41,6 @@ export default withApiSession(
   withHandler({
     method: "POST",
     handler,
+    isPrivate: false,
   })
 );

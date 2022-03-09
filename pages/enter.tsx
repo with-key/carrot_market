@@ -6,6 +6,7 @@ import Input from "@components/input";
 import useMutation from "@libs/client/useMutation";
 import { cls } from "@libs/client/utils";
 import { useRouter } from "next/router";
+import useUser from "@libs/client/useUser";
 
 interface EnterForm {
   email?: string;
@@ -22,6 +23,7 @@ interface MutationResult {
 
 const Enter: NextPage = () => {
   const router = useRouter();
+
   const [enter, { loading, data, error }] =
     useMutation<MutationResult>("/api/users/enter");
   const [confirmToken, { loading: tokenLoading, data: tokenData }] =
@@ -46,8 +48,6 @@ const Enter: NextPage = () => {
     if (tokenLoading) return;
     confirmToken(validForm);
   };
-
-  console.log("tokenData", tokenData);
 
   useEffect(() => {
     if (tokenData?.ok) {
