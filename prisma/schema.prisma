@@ -13,14 +13,15 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  phone     String?  @unique
-  email     String?  @unique
+  id        Int       @id @default(autoincrement())
+  phone     String?   @unique
+  email     String?   @unique
   name      String
   avatar    String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   tokens    Token[]
+  product   Product[]
 }
 
 model Token {
@@ -30,4 +31,16 @@ model Token {
   userId    Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Product {
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      Int // Product의 userId 필드에 저장되는 숫자가 User의 id라는 것을 의미한다. 
+  image       String
+  name        String
+  price       Int
+  description String   @db.MediumText // String은 varchar로 191자로 제한이 있다, 더 많은 텍스트를 넣고자 할 때 제한을 설정할 수 있다
 }
