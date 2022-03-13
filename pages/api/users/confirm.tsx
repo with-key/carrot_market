@@ -32,6 +32,7 @@ async function handler(
       userId: foundToken.userId,
     },
   });
+
   res.status(200).json({
     ok: true,
   });
@@ -39,7 +40,7 @@ async function handler(
 
 export default withApiSession(
   withHandler({
-    method: "POST",
+    methods: ["POST"],
     handler,
     isPrivate: false,
   })

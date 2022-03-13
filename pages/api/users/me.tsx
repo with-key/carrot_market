@@ -21,7 +21,7 @@ async function handler(
 // value가 어떤 것인지 직관적으로 알 수 있다.
 export default withApiSession(
   withHandler({
-    method: "GET",
+    methods: ["GET"],
     handler,
   })
 );
