@@ -4,7 +4,10 @@ import Input from "@components/input";
 import Layout from "@components/layout";
 import TextArea from "@components/textarea";
 import { useForm } from "react-hook-form";
+import { Product } from "@prisma/client";
 import useMutation from "@libs/client/useMutation";
+import { useEffect } from "react";
+import { useRouter } from "next/router";
 
 type UploadProductForm = {
   name: string;
@@ -12,7 +15,13 @@ type UploadProductForm = {
   description: string;
 };
 
+type UploadProductMutation = {
+  ok: boolean;
+  product: Product; // Prisma에서 만들어준 타입이며, client에서도 사용할 수 있다
+};
+
 const Upload: NextPage = () => {
+  const router = useRouter();
   const { register, handleSubmit } = useForm<UploadProductForm>({
     defaultValues: {
       name: "",
@@ -20,11 +29,20 @@ const Upload: NextPage = () => {
       description: "",
     },
   });
-  const [uploadProduct, { loading, data }] = useMutation("/api/products");
+  const [uploadProduct, { loading, data }] =
+    useMutation<UploadProductMutation>("/api/products");
 
   const ovValid = (data: UploadProductForm) => {
-    console.log(data);
+    if (loading) return;
+    uploadProduct(data);
   };
+
+  useEffect(() => {
+    if (!data?.product.id) return;
+    router.push(`/products/${data?.product.id}`);
+  }, [data, router]);
+
+  console.log("data :>> ", data);
 
   return (
     <Layout canGoBack title="Upload Product">
