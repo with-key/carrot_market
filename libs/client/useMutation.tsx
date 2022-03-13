@@ -7,7 +7,7 @@ interface UseMutationState<T> {
 }
 
 // useMutation의 return [] 타입
-type UseMutationResult<T> = [(data: T) => void, UseMutationState<T>];
+type UseMutationResult<T> = [(data: any) => void, UseMutationState<T>];
 
 export default function useMutation<T = any>(
   url: string
