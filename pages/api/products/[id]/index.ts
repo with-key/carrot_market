@@ -7,7 +7,10 @@ async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ResponseType>
 ) {
-  const { id } = req.query; // id는 string | string[] 이다.
+  const {
+    session: { user },
+    query: { id },
+  } = req;
 
   // db에서 product 조회
   const product = await client.product.findUnique({
@@ -44,7 +47,22 @@ async function handler(
     },
   });
 
-  res.json({ ok: true, product, relatedProducts });
+  // isLiked의 역할 : 해당 상품을 현재 유저가 '좋아요' 누른 상태인지 아닌지 알려준다.
+  // 현재 유저의 정보와 현재 상품의 아이디를 and 조건으로 충족하는 상품을 조회하고, 그 상품의 fav 여부를 확인
+  // fav - user - product의 관계
+  const isLiked = Boolean(
+    await client.fav.findFirst({
+      where: {
+        productId: product?.id,
+        userId: user?.id,
+      },
+      select: {
+        id: true,
+      },
+    })
+  );
+
+  res.json({ ok: true, product, isLiked, relatedProducts });
 }
 
 export default withApiSession(
