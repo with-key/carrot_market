@@ -43,6 +43,7 @@ model Product {
   image       String
   name        String
   price       Int
+  favsCount   Int // 이 상품의 좋아요 갯수 :: 누군가 상품을 관심목록에 추가하면 + 1 되어야 한다. 
   description String   @db.MediumText // String은 varchar로 191자로 제한이 있다, 더 많은 텍스트를 넣고자 할 때 제한을 설정할 수 있다
   favs        Fav[]
 }
