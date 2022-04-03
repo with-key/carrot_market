@@ -19,7 +19,7 @@ async function handler(
    * 좀 더 넓은 조건으로 검색할 수 있음
    */
 
-  // userId 와 productId가 같은 항목(product)을  찾는다.
+  // Fav Table에서 현재 머물고 있는 페이지의 userId 와 productId가 같은 항목(product)을  찾는다.
   const alreadyExists = await client.fav.findFirst({
     where: {
       productId: +id.toString(), // 현재 조회하고 있는 product의 productId 와,
@@ -27,16 +27,18 @@ async function handler(
     },
   });
 
-  console.log(alreadyExists);
-
+  // 만약 fav table에 userId, productId가 모두 일치하는 항목이 있다면
+  // 그것(alreadyExists)은 해당 product에 '좋아요'가 true 라는 것이다.
   if (alreadyExists) {
+    // alreadyExists 가 있다면 그것을 찾아서 삭제한다.
     await client.fav.delete({
       where: {
         id: alreadyExists.id,
       },
     });
   } else {
-    // product에 fav가 존재하지 않는다면, data, product를 생성한다.
+    // fav에 alreadyExists가 없다면, 생성해서 넣는다.
+    // fav가 있다는 것은 곧 '좋아요'가 true라는 것이다.
     await client.fav.create({
       data: {
         user: {

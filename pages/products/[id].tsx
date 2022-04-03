@@ -2,7 +2,7 @@ import type { NextPage } from "next";
 import Button from "@components/button";
 import Layout from "@components/layout";
 import { useRouter } from "next/router";
-import useSWR from "swr";
+import useSWR, { useSWRConfig } from "swr";
 import { Product, User } from "@prisma/client";
 import Link from "next/link";
 import useMutation from "@libs/client/useMutation";
@@ -17,20 +17,27 @@ type ProductDetailResponse = {
 
 const ProductsDetail: NextPage = () => {
   const router = useRouter();
+  const { mutate: unboundMutate } = useSWRConfig();
 
   // router가 mount 되기까지는 {} 로 있기 때문에 opiotnal query는 삼항연산자로 구현한다
-  const { data } = useSWR<ProductDetailResponse>(
+  const { data, mutate: boundMutate } = useSWR<ProductDetailResponse>( // bound mutate
     router.query.id ? `/api/products/${router.query.id}` : null
   );
-  const [toggleFav, { data: favData, error, loading }] = useMutation(
-    `/api/products/${router.query.id}/fav`
-  );
+
+  const [toggleFav] = useMutation(`/api/products/${router.query.id}/fav`);
 
   const onFavClick = () => {
+    if (!data) return;
+    boundMutate({ ...data, isLiked: !data?.isLiked }, false); // cache만 변경한다
+    // unboundMutate(
+    //   "/api/users/me",
+    //   (prev: any) => {
+    //     return { ok: !prev?.ok };
+    //   },
+    //   false
+    // );
     toggleFav({});
   };
-
-  console.log(data);
 
   return (
     <Layout canGoBack>
