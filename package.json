@@ -12,8 +12,8 @@
     "@sendgrid/mail": "^7.6.0",
     "iron-session": "^6.0.5",
     "next": "^12.0.7",
-    "react": "^18.0.0-rc.0",
-    "react-dom": "^18.0.0-rc.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
     "react-hook-form": "^7.25.0",
     "swr": "^1.2.2",
     "twilio": "^3.73.0"
