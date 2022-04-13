@@ -7,6 +7,7 @@ import useMutation from "@libs/client/useMutation";
 import { useEffect } from "react";
 import { Post } from "@prisma/client";
 import { useRouter } from "next/router";
+import useCoords from "@libs/client/useCoords";
 
 type WriteForm = {
   question: string;
@@ -19,13 +20,14 @@ type WriteResponse = {
 
 const Write: NextPage = () => {
   const router = useRouter();
+  const { latitude, longitude } = useCoords();
   const { register, handleSubmit } = useForm<WriteForm>();
-  const [mutation, { data, loading, error }] =
+  const [addPost, { data, loading, error }] =
     useMutation<WriteResponse>("/api/posts");
 
   const onValid = (form: WriteForm) => {
     if (loading) return; // 사용자의 여러분 요청을 방지
-    mutation(form);
+    addPost({ ...form, latitude, longitude });
   };
 
   useEffect(() => {
@@ -40,7 +42,6 @@ const Write: NextPage = () => {
         <TextArea
           register={register("question", {
             required: true,
-            maxLength: 5,
           })}
           required
           placeholder="Ask a question!"

@@ -8,6 +8,11 @@ async function handler(
   res: NextApiResponse<ResponseType>
 ) {
   if (req.method === "GET") {
+    const { latitude, longitude } = req.query;
+
+    const parsedLatitude = parseFloat(latitude.toString());
+    const parsedLogitude = parseFloat(longitude.toString());
+
     const posts = await client.post.findMany({
       include: {
         user: {
@@ -24,6 +29,16 @@ async function handler(
           },
         },
       },
+      where: {
+        latitude: {
+          gte: parsedLatitude - 0.01,
+          lte: parsedLatitude + 0.01,
+        },
+        longitude: {
+          gte: parsedLogitude - 0.01,
+          lte: parsedLogitude + 0.01,
+        },
+      },
     });
 
     res.json({
@@ -34,13 +49,15 @@ async function handler(
   // post 요청을 받았을 때 로직 구현
   if (req.method === "POST") {
     const {
-      body: { question },
+      body: { question, latitude, longitude },
       session: { user },
     } = req;
 
     const post = await client.post.create({
       data: {
         question,
+        latitude,
+        longitude,
         user: {
           connect: {
             id: user?.id,

@@ -25,7 +25,6 @@ const Home: NextPage = () => {
     <Layout title="홈" hasTabBar>
       <div className="flex flex-col space-y-5 divide-y">
         {data?.products?.map((product) => {
-          console.log(product);
           return (
             <Item
               id={product.id}

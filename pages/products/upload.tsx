@@ -42,8 +42,6 @@ const Upload: NextPage = () => {
     router.push(`/products/${data?.product.id}`);
   }, [data, router]);
 
-  console.log("data :>> ", data);
-
   return (
     <Layout canGoBack title="Upload Product">
       <form className="p-4 space-y-4" onSubmit={handleSubmit(ovValid)}>

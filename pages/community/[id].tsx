@@ -51,7 +51,6 @@ const CommunityPostDetail: NextPage = () => {
   const onWonderClick = () => {
     // optimistic update
     if (!data) return;
-    console.log(data);
     mutate(
       {
         ...data,
@@ -91,8 +90,6 @@ const CommunityPostDetail: NextPage = () => {
       mutate();
     }
   }, [answerData, mutate, reset]);
-
-  console.log(data);
 
   return (
     <Layout canGoBack>
