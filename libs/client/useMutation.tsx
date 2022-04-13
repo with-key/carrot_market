@@ -1,26 +1,24 @@
 import { useState } from "react";
 
-interface UseMutationState<T> {
+type UseMutationState<T> = {
   loading: boolean;
   data?: T;
   error?: object;
-}
+};
 
 // useMutation의 return [] 타입
 type UseMutationResult<T> = [(data: any) => void, UseMutationState<T>];
 
-export default function useMutation<T = any>(
-  url: string
-): UseMutationResult<T> {
-  const [state, setSate] = useState<UseMutationState<T>>({
+const useMutation = <T,>(url: string): UseMutationResult<T> => {
+  const [state, setState] = useState<UseMutationState<T>>({
     loading: false,
     data: undefined,
     error: undefined,
   });
-
   // server data를 fetch 하고,  data와 error, isLoading를 정의함
-  function mutation(data: any) {
-    setSate((prev) => ({ ...prev, loading: true }));
+  const mutation = (data: any) => {
+    setState((prev) => ({ ...prev, loading: true }));
+
     fetch(url, {
       method: "POST",
       headers: {
@@ -29,10 +27,12 @@ export default function useMutation<T = any>(
       body: JSON.stringify(data),
     })
       .then((response) => response.json().catch(() => {}))
-      .then((data) => setSate((prev) => ({ ...prev, data, loading: false })))
+      .then((data) => setState((prev) => ({ ...prev, data, loading: false })))
       .catch((error) =>
-        setSate((prev) => ({ ...prev, error, loading: false }))
+        setState((prev) => ({ ...prev, error, loading: false }))
       );
-  }
+  };
   return [mutation, { ...state }];
-}
+};
+
+export default useMutation;
