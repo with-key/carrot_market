@@ -7,6 +7,30 @@ async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ResponseType>
 ) {
+  if (req.method === "GET") {
+    const posts = await client.post.findMany({
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            avatar: true,
+          },
+        },
+        _count: {
+          select: {
+            wonderings: true,
+            answers: true,
+          },
+        },
+      },
+    });
+
+    res.json({
+      ok: true,
+      posts,
+    });
+  }
   // post 요청을 받았을 때 로직 구현
   if (req.method === "POST") {
     const {
@@ -34,7 +58,7 @@ async function handler(
 
 export default withApiSession(
   withHandler({
-    methods: ["POST"],
+    methods: ["POST", "GET"],
     handler,
   })
 );
