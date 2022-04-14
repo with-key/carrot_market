@@ -19,9 +19,14 @@ type PostsResponse = {
 const Community: NextPage = () => {
   // 현재 게시글이 작성된 위치 정보를 QS로 전달한다.
   const { latitude, longitude } = useCoords();
+  console.log(latitude, longitude);
 
   const { data, error } = useSWR<PostsResponse>(
-    `/api/posts?latitude=${latitude}&longitude=${longitude}`
+    // useEffect는 Next.js Backend에서는 실행이 안되기 때문에 null 값으로 요청이 전달된다.
+    // 그것을 방지하고자 삼항연산자를 통해서 분기처리 한다.
+    latitude && longitude
+      ? `/api/posts?latitude=${latitude}&longitude=${longitude}`
+      : null
   );
 
   return (

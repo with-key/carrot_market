@@ -13,19 +13,24 @@ datasource db {
 }
 
 model User {
-  id         Int         @id @default(autoincrement())
-  phone      String?     @unique
-  email      String?     @unique
-  name       String
-  avatar     String?
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
-  tokens     Token[]
-  fav        Fav[]
-  product    Product[]
-  posts      Post[]
-  answers    Answer[]
-  wonderings Wondering[]
+  id              Int         @id @default(autoincrement())
+  phone           String?     @unique
+  email           String?     @unique
+  name            String
+  avatar          String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  tokens          Token[]
+  fav             Fav[]
+  product         Product[]
+  posts           Post[]
+  answers         Answer[]
+  wonderings      Wondering[]
+  writtenReviews  Review[]    @relation(name: "writtenReviews") //  다른 모델을 여러번 가르키는 경우 relations name 넣어주기
+  receivedReviews Review[]    @relation(name: "receivedReviews")
+  sales           Sale[]
+  purchases       Purchase[]
+  Record          Record[]
 }
 
 model Token {
@@ -38,17 +43,20 @@ model Token {
 }
 
 model Product {
-  id          Int      @id @default(autoincrement())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id          Int        @id @default(autoincrement())
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      Int // Product의 userId 필드에 저장되는 숫자가 User의 id라는 것을 의미한다. 
   image       String
   name        String
   price       Int
   favsCount   Int // 이 상품의 좋아요 갯수 :: 누군가 상품을 관심목록에 추가하면 + 1 되어야 한다. 
-  description String   @db.MediumText // String은 varchar로 191자로 제한이 있다, 더 많은 텍스트를 넣고자 할 때 제한을 설정할 수 있다
+  description String     @db.MediumText // String은 varchar로 191자로 제한이 있다, 더 많은 텍스트를 넣고자 할 때 제한을 설정할 수 있다
   favs        Fav[]
+  sales       Sale[]
+  purchases   Purchase[]
+  Record      Record[]
 }
 
 // user에 의해서 생성되고, product를 가리킨다.
@@ -98,4 +106,56 @@ model Wondering {
   userId    Int
   post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId    Int
+}
+
+// My Carrot
+// 하나의 모델에서 같은 모델을 2번 연결할 때는 relation에 이름을 부여한다. (모호한 relataion 문제 해결)
+model Review {
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  review      String   @db.MediumText
+  createdBy   User     @relation(name: "writtenReviews", fields: [createdById], references: [id], onDelete: Cascade) // 나에 의해 쓰여진 리뷰
+  createdById Int
+  createFor   User     @relation(name: "receivedReviews", fields: [createForId], references: [id], onDelete: Cascade) // 나에게 쓰여진 리뷰
+  createForId Int
+  score       Int      @default(1)
+}
+
+model Sale {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Purchase {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// model의 모양이 비슷한 경우 다른 방법을 이용해서 model을 만들수도 있다.
+model Record {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  kind      Kind
+}
+
+enum Kind {
+  Purchase
+  Sale
+  Fav
 }
