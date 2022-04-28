@@ -17,7 +17,7 @@ type ReviewResponse = {
 };
 
 const Profile: NextPage = () => {
-  const { user } = useUser();
+  const { user } = useUser({ pathname: "/profile" });
   const { data } = useSWR<ReviewResponse>("/api/reviews");
 
   console.log(data);
