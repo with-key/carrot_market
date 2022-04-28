@@ -10,7 +10,7 @@ type method = "GET" | "POST" | "DELETE";
 type ConfigType = {
   methods: method[]; // 하나의 path variable로 여러개의 method를 허용하기 위해 리팩토링함 (resuful 사양서에 맞추기 위함)
   handler: (req: NextApiRequest, res: NextApiResponse) => void;
-  isPrivate?: boolean; // false => 로그인 한 사람만 접속 가능, true => 아무나 접속 가능
+  isPrivate?: boolean; // false : 로그인을 하지 않아도, api를 사용할 수 있음 <-> true : 로그인을 하지 않으면, api 를 사용할 수 없음
 };
 
 const withHandler = ({ methods, handler, isPrivate = true }: ConfigType) => {
@@ -24,7 +24,7 @@ const withHandler = ({ methods, handler, isPrivate = true }: ConfigType) => {
       return res.status(405).end();
     }
 
-    // user가 로그인 하지 않았을 때 접속을 제한한다.
+    // true && true 이면 비정상적인 접근으로 인식함
     if (isPrivate && !req.session.user) {
       return res.status(401).json({
         ok: false,

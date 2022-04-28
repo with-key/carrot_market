@@ -16,6 +16,9 @@ async function handler(
     where: {
       userId: user?.id,
     },
+    include: {
+      product: true,
+    },
   });
 
   res.json({
