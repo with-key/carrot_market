@@ -48,6 +48,8 @@ const Enter: NextPage = () => {
     confirmToken(validForm);
   };
 
+  // 로그인을 성공했을 때 router를 이동시키는 로직
+  // 로그인 성공 여부는 서버에서 보내준 response를 기준으로 한다.
   useEffect(() => {
     if (tokenData?.ok) {
       router.push("/");

@@ -119,7 +119,7 @@ model Review {
   createdById Int
   createFor   User     @relation(name: "receivedReviews", fields: [createForId], references: [id], onDelete: Cascade) // 나에게 쓰여진 리뷰
   createForId Int
-  score       Int      @default(1)
+  score       Int      @default(1) // record가 있는 table을 수정했을 때, default 를 통해서 충돌을 방지한다.
 }
 
 model Sale {
